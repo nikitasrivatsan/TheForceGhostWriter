@@ -1,0 +1,36 @@
+<!-- Welcome -> index.html.erb -->
+
+
+
+
+
+<div class="body-wrapper container-fluid">
+	<div class="info-body container">
+		</br>
+		<h3 style="text-align:center;">Pick your choice of two presidential candidates and watch a dank-ass debate unfurl</h3>
+		</br>
+		<div class="row">
+			<div class="col-md-4" id="bernie">
+				<img src="/assets/berniesanders.jpg" class="img-circle" alt="Senator Sanders" style="width:330px;height:228px;" onmouseover="bigImg(this)">
+			</div>
+			<div class="col-md-4" id="hillary">
+				<img src="/assets/hillaryclinton.jpg" class="img-circle" alt="Secretary Clinton" style="width:330px;height:228px;">
+			</div>
+			<div class="col-md-4" id="trump">
+				<img src="/assets/donaldtrump.jpg" class="img-circle" alt="Mogul Trump" style="width:330px;height:228px;">
+			</div>
+		</div>
+		</br></br>
+		<%= button_to "Kickoff" %>
+
+		<%= render '/partials/sampletext' %>
+	</div>
+
+
+
+
+</div>
+
+
+
+<h3>where the speech should be: <%= @debate %></h3>

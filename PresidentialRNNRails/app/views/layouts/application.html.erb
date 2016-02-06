@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PresidentialRNNRails</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<div class="header-wrapper container-fluid">
+	<div class="layer container-fluid">
+		<div class="container" id="topbar">
+			<h1>Presidential Debate Generator</h1><h3 style="text-align:right;"><%= link_to 'About', about_index_path %></h3>
+		</div>
+	</div>
+</div>
+
+<%= yield %>
+
+</body>
+</html>
