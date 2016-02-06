@@ -28,8 +28,8 @@ def main():
     cell = rnn_cell.BasicLSTMCell(HIDDEN_SIZE)
     initial_state = state = tf.zeros([BATCH_SIZE, cell.state_size], dtype = np.float32)
 
-    words = tf.placeholder(tf.float32, [BATCH_SIZE, NUM_STEPS])
-    target_words = tf.placeholder(tf.int32, [BATCH_SIZE, NUM_STEPS])
+    words = tf.placeholder(tf.float32, [BATCH_SIZE, NUM_STEPS, num_chars])
+    target_words = tf.placeholder(tf.int32, [BATCH_SIZE, NUM_STEPS, num_chars])
 
     W_soft = tf.Variable(tf.truncated_normal([HIDDEN_SIZE, num_chars], stddev = 0.01))
     b_soft = tf.Variable(tf.constant(0.01, shape = [num_chars]))
@@ -37,8 +37,10 @@ def main():
     loss = tf.Variable(tf.constant(0.0))
     for i in range(0, NUM_STEPS):
         with tf.variable_scope("LSTM" + str(i)):
-            output, state = cell(tf.reshape(words[:, i], [BATCH_SIZE, 1]), state)
+            output, state = cell(tf.reshape(words[:, i,:], [BATCH_SIZE, num_chars]), state)
             prediction = tf.nn.softmax(tf.matmul(output, W_soft) + b_soft)
+
+            loss = tf.add(loss, tf.reduce_sum(tf.mul(prediction,target_words[:,i,:])))
 
             for j in range(0, BATCH_SIZE):
                 loss = tf.add(loss, tf.log(tf.slice(prediction, tf.pack([j, target_words[j, i]]), [1, 1])))
@@ -82,12 +84,19 @@ def main():
         total_loss = 0.0
 
         for i in range(0, epoch_size):
-            x = data_batched[:, i * NUM_STEPS : (i + 1) * NUM_STEPS]
+            x = data_batched[:, i * NUM_STEPS : (i + 1) * NUM_STEPS] # Returns words (BATCH_SIZE * NUM_STEPS)
             y = data_batched[:, i * NUM_STEPS + 1 : (i + 1) * NUM_STEPS + 1]
 
+            ohx = np.zeros((BATCH_SIZE, NUM_STEPS, num_chars))
+            ohy = np.zeros((BATCH_SIZE, NUM_STEPS, num_chars))
+            for j in range(0, BATCH_SIZE):
+                for k in range(0, NUM_STEPS):
+                    ohx[j,k,x[j,k]] = 1
+                    ohy[j,k,y[j,k]] = 1
+
             train_step.run(feed_dict = {initial_state : current_state,
-                                        words : x,
-                                        target_words : y})
+                                        words : ohx,
+                                        target_words : ohy})
 
             current_state, current_loss = sess.run([final_state, loss],
                                                    feed_dict = {initial_state : current_state, words : x, target_words : y})
