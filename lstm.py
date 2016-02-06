@@ -5,19 +5,27 @@ import tensorflow as tf
 import sys
 import math
 import numpy as np
+import random
 
 # hyperparameters
 BATCH_SIZE = 20
 HIDDEN_SIZE = 200
 EPOCHS = 5
 NUM_STEPS = 100
+NUM_SEQUENCES = 2
+
+if len(sys.argv) == 3:
+    _, filename, behavior = sys.argv
+else:
+    print "./lstm.py <filename> [train|test]"
+    sys.exit()
 
 # data manipulation
-data = open("star_wars_vii.txt", 'r').read()
+data = open(filename, 'r').read()
 data_size = len(data)
-chars = set(data)
+chars = list(set(data))
 num_chars = len(chars)
-char_idx = {ch:i for i,ch in enumerate(list(chars))}
+char_idx = {ch:i for i,ch in enumerate(chars)}
 
 def main():
 
@@ -35,10 +43,12 @@ def main():
     b_soft = tf.Variable(tf.constant(0.01, shape = [num_chars]))
 
     loss = tf.Variable(tf.constant(0.0))
+    predictions = []
     for i in range(0, NUM_STEPS):
         with tf.variable_scope("LSTM" + str(i)):
             output, state = cell(tf.reshape(words[:, i,:], [BATCH_SIZE, num_chars]), state)
             prediction = tf.nn.softmax(tf.matmul(output, W_soft) + b_soft)
+            predictions.append(prediction)
 
             loss = tf.add(loss, tf.reduce_sum(tf.mul(prediction,target_words[:,i,:])))
 
@@ -66,49 +76,77 @@ def main():
     # initialize everything
     sess.run(tf.initialize_all_variables())
 
-    print "Training model"
-
     # saving the model
     saver = tf.train.Saver()
     sess.run(tf.initialize_all_variables())
     checkpoint = tf.train.get_checkpoint_state("saved_networks")
-    if checkpoint and checkpoint.model_checkpoint_path:
+    if checkpoint and checkpoint.model_checkpoint_path and behavior == "test":
         saver.restore(sess, checkpoint.model_checkpoint_path)
         print "Successfully loaded:", checkpoint.model_checkpoint_path
-    else:
-        print "Could not find old network weights"
-    
-    # iterate over batches
-    for e in range(0, EPOCHS):
+
+        # random seed
+        ch = random.randrange(num_chars)
+        
+        # repeatedly sample text
+        buff = ""
         current_state = initial_state.eval()
-        total_loss = 0.0
+        for i in range(0, NUM_SEQUENCES):
+            gen_words = np.zeros((BATCH_SIZE, NUM_STEPS), dtype = np.int32)
+            gen_words[1, 1] = ch
+            for j in range(0, NUM_STEPS):
+                next_char_dist = predictions[j].eval(feed_dict = {initial_state : current_state,
+                                                                  words : gen_words})
+                # sample a character
+                choice = -1
+                point = random.random()
+                weight = 0.0
+                for p in range(0, num_chars):
+                    weight += next_char_dist[1, p]
+                    if weight >= point:
+                        choice = p
+                        break
 
-        for i in range(0, epoch_size):
-            x = data_batched[:, i * NUM_STEPS : (i + 1) * NUM_STEPS] # Returns words (BATCH_SIZE * NUM_STEPS)
-            y = data_batched[:, i * NUM_STEPS + 1 : (i + 1) * NUM_STEPS + 1]
+                buff += chars[choice]
+                gen_words[1, j] = choice
 
-            ohx = np.zeros((BATCH_SIZE, NUM_STEPS, num_chars))
-            ohy = np.zeros((BATCH_SIZE, NUM_STEPS, num_chars))
-            for j in range(0, BATCH_SIZE):
-                for k in range(0, NUM_STEPS):
-                    ohx[j,k,x[j,k]] = 1
-                    ohy[j,k,y[j,k]] = 1
+            ch = gen_words[1, -1]
+            current_state = final_state.eval(feed_dict = {initial_state : current_state,
+                                                          words : gen_words})
+        print buff
+        
+    else:
+        print "Training new network weights"
 
-            train_step.run(feed_dict = {initial_state : current_state,
-                                        words : ohx,
-                                        target_words : ohy})
+        # iterate over batches
+        for e in range(0, EPOCHS):
+            current_state = initial_state.eval()
+            total_loss = 0.0
 
-            current_state, current_loss = sess.run([final_state, loss],
-                                                   feed_dict = {initial_state : current_state, words : x, target_words : y})
+            for i in range(0, epoch_size):
+                x = data_batched[:, i * NUM_STEPS : (i + 1) * NUM_STEPS] # Returns words (BATCH_SIZE * NUM_STEPS)
+                y = data_batched[:, i * NUM_STEPS + 1 : (i + 1) * NUM_STEPS + 1]
 
-            total_loss += current_loss[0][0]
+                ohx = np.zeros((BATCH_SIZE, NUM_STEPS, num_chars))
+                ohy = np.zeros((BATCH_SIZE, NUM_STEPS, num_chars))
+                for j in range(0, BATCH_SIZE):
+                    for k in range(0, NUM_STEPS):
+                        ohx[j,k,x[j,k]] = 1
+                        ohy[j,k,y[j,k]] = 1
 
-        # save weights
-        saver.saver(sess, "saved_networks/", global_step = e)
+                train_step.run(feed_dict = {initial_state : current_state,
+                                            words : ohx,
+                                            target_words : ohy})
 
-        total_loss /= epoch_size
-        print "Average loss per sequence for epoch", e, ": ", total_loss
+                current_state, current_loss = sess.run([final_state, loss],
+                                                       feed_dict = {initial_state : current_state, words : x, target_words : y})
 
+                total_loss += current_loss[0][0]
 
+            # save weights
+            saver.save(sess, "saved_networks/" + filename, global_step = e)
+
+            total_loss /= epoch_size
+            print "Average loss per sequence for epoch", e, ": ", total_loss
+        
 if __name__ == "__main__":
     main()
