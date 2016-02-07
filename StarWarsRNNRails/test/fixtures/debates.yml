@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  p1: 
+  p2: 
+
+two:
+  p1: 
+  p2: 

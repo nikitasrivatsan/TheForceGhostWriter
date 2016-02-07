@@ -1,0 +1,113 @@
+@import "bootstrap";
+
+html,body {
+	background-color: rgba(0,0,75,0.05);
+}
+
+.header-wrapper {
+	/*background-color: rgba(255,102,51,0.75);*/
+	background: url('/assets/topband2.jpg') no-repeat 50% 50% fixed;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+}
+
+.layer {
+	/*background-color: rgba(0,138,184,0.25);*/
+	background-color: rgba(0,0,0,0.75);
+	padding: 65px 0 10px 0;
+	margin: 0 0 0 0;
+	width: 100%;
+	height: 100%;
+}
+
+.body-wrapper {
+	background: url('/assets/bodyback.jpg') no-repeat 50% 50% fixed;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+}
+
+.info-body {
+	background-color: rgba(255,255,255,0.85);
+	padding: 10px 20px 10px 20px;
+	height: 100%;
+}
+
+h1 {
+	font-weight: bold;
+	font-variant: small-caps;
+	color: rgba(255,255,255,0.95);
+}
+
+.center {
+	margin: auto;
+    width: 60%;
+    text-align: center;
+    padding: 10px;
+    border-radius: 25px;
+}
+
+
+p {
+	padding: 0 0 0 0;
+	margin: 0 20px 20px 20px;
+}
+
+img {
+	margin:0px;
+	height:0px;
+	width:0px;
+	-moz-transition:-moz-transform 0.2s ease-in; 
+	-webkit-transition:-webkit-transform 0.2s ease-in; 
+	-o-transition:-o-transform 0.2s ease-in;
+}
+
+img:hover {
+	-moz-transform:scale(1.1); 
+	-webkit-transform:scale(1.1);
+	-o-transform:scale(1.1);
+}
+
+a {
+	text-decoration: none;
+	text-color: none;
+}
+a:hover {
+	text-decoration: none;
+}
+
+ul {
+	text-align: center;
+}
+
+li {
+	width: 200px;
+}
+
+.navbar {
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+}
+
+.affix {
+	top: 0;
+	width: 100%;
+}
+
+.affix + .container-fluid {
+}
+
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */

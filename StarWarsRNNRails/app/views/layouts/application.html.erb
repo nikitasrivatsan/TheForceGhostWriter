@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>StarWars RNN on Rails</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<div class="header-wrapper container-fluid">
+	<div class="layer container-fluid">
+		<div class="container" id="topbar">
+			<h1>StarWars RNN on Rails</h1>
+		</div>
+	</div>
+</div>
+
+<div class="nav-wrapper" style="height:51px;">
+<nav class="navbar navbar-inverse" data-spy="affix" style="height:51px;" data-offset-top="145">
+  	<div class="container">
+	  	<ul class="nav navbar-nav">
+		    <li class=<%= 'active' if current_page?(welcome_index_path) %>><%= link_to 'HOME', welcome_index_path %></li>
+		    <li class=<%= 'active' if current_page?(about_index_path) %>><%= link_to 'ABOUT', about_index_path %></li>
+		    <li class=<%= 'active' if current_page?(comparison_index_path) %>><%= link_to 'COMPARISON', comparison_index_path %></li>
+		    <li class=<%= 'active' if current_page?(theory_index_path) %>><%= link_to 'THEORY', theory_index_path %></li>
+	  	</ul>
+  	</div>
+</nav>
+</div>
+
+<%= yield %>
+
+</body>
+</html>

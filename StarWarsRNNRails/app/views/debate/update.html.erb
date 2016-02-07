@@ -1,0 +1,25 @@
+<!-- Debate update.html.erb -->
+
+<div class="body-wrapper container-fluid">
+	<div class="info-body container">
+		
+	<h3 style="text-align:center;">Generated Script</h3>
+
+		<% p1 = @debate.p1 %>
+		<% p2 = @debate.p2 %>
+		<% sL = @debate.sL %>
+		<%= `python lib/assets/pythontemplate/pythontemplate.py #{@debate.p1} #{@debate.p2} #{@debate.sL}` %>
+
+		<%= render '/partials/sampletext' %>
+
+
+
+
+
+
+
+
+
+	</div>
+
+</div>

@@ -1,0 +1,2 @@
+module DebateHelper
+end
