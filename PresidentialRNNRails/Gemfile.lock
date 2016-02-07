@@ -58,6 +58,9 @@ GEM
     mime-types (2.99)
     minitest (5.8.4)
     multi_json (1.11.2)
+    passenger (5.0.24)
+      rack
+      rake (>= 0.8.1)
     rack (1.5.5)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -121,6 +124,7 @@ DEPENDENCIES
   execjs
   jbuilder (~> 2.0)
   jquery-rails
+  passenger
   rails (= 4.1.8)
   sass-rails (~> 4.0.3)
   sdoc (~> 0.4.0)
