@@ -1,2 +1,6 @@
-model_checkpoint_path: "star_wars_vii.txt-0"
-all_model_checkpoint_paths: "star_wars_vii.txt-0"
+model_checkpoint_path: "star_wars_complete.txt-10"
+all_model_checkpoint_paths: "star_wars_complete.txt-6"
+all_model_checkpoint_paths: "star_wars_complete.txt-7"
+all_model_checkpoint_paths: "star_wars_complete.txt-8"
+all_model_checkpoint_paths: "star_wars_complete.txt-9"
+all_model_checkpoint_paths: "star_wars_complete.txt-10"
