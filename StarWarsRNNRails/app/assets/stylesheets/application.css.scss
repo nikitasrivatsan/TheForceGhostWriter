@@ -1,7 +1,8 @@
 @import "bootstrap";
 
 html,body {
-	background-color: rgba(0,0,75,0.05);
+	background: url('/assets/bodyback.jpg') no-repeat 50% 50% fixed;
+	height: 100%;
 }
 
 .header-wrapper {
@@ -21,15 +22,22 @@ html,body {
 }
 
 .body-wrapper {
-	background: url('/assets/bodyback.jpg') no-repeat 50% 50% fixed;
+	
 	padding: 0 0 0 0;
 	margin: 0 0 0 0;
+	height: 100%;
+	height: auto;
 }
 
 .info-body {
 	background-color: rgba(255,255,255,0.85);
 	padding: 10px 20px 10px 20px;
 	height: 100%;
+}
+
+.blurb-wrapper {
+	width: 40%;
+	text-align: center;
 }
 
 h1 {

@@ -8,7 +8,11 @@
 	<div class="info-body container">
 		</br>
 		<h3 style="text-align:center;">Recreate the adventure of Star Wars with new scripts at your command.</h3>
-		<p>Below are three input fields. Seed provides a starting string for speech generation. Number of characters limits the length of the script. Finally, temperature does ________ </p>
+		
+		</br>
+		<div class="blurb-wrapper container">
+			<p style="width=30px;">Below are three input fields. Seed provides a starting string for speech generation. Number of characters limits the length of the script. Finally, temperature modulates the variability of the generation model. Play around with it and see what you get! </p>
+		</div>
 		
 		</br>
 		
@@ -23,12 +27,11 @@
 			<%= f.label :p2, "Number of Characters (5000 to 10000)" %></br>
 			<%= f.number_field :p2, hide_label: true %></br>
 
-			<%= f.label :sL, "Temperature (range of 0 to 1)" %></br>
-			<%= f.range_field :sL, :in => 0..1, :step => 0.01, hide_label: true %></br>
-			<p id="target"></p>
+			<%= f.label :sL, "Temperature (range of 0 to 0.1)" %></br>
+			<%= f.range_field :sL, :in => 0..100, :step => 1, hide_label: true %></br>
 
 			<%= f.label "", "Click BB8 to start!" %></br>
-			<%= f.submit "Kickoff", :type => :image, :src => "/assets/BB8.png", :style => "width:257px;height:375px;", :onmouseover => "bigImg(this)", :class => "img-thumbnail" %>
+			<%= f.submit "Kickoff", :type => :image, :src => "/assets/BB8_2.png", :style => "width:257px;height:373px;", :onmouseover => "bigImg(this)" %>
 		<% end %> 
 		</div>
 

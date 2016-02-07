@@ -4,16 +4,29 @@
 		</br>
 		<h3 style="text-align:center;">The Team</h3>
 		
-		<p>Vamsi Chunduru is a current Masters student in Computer Science at Johns Hopkins University.</p>
-		<p>Akshay Srivatsan is a current junior undergraduate in Computer Science at Johns Hopkins University.</p>
-		<p>Conan Chen is a December 2015 B.S. graduate of Biomedical Engineering at Johns Hopkins University.</p>
+		<p>Vamsi Chunduru is a current Masters student in Computer Science at Johns Hopkins University. Akshay Srivatsan is a current junior undergraduate in Computer Science at Johns Hopkins University. Conan Chen is a December 2015 B.S. graduate of Biomedical Engineering at Johns Hopkins University.</p>
 
-		</br>
+		<h3 style="text-align:center;">Inspiration</h3>
+		<p>Our project stems from a simple question: can you model text well enough to generate original content? We’d recently seen the new Star Wars movie, and were immediately hungry for more. Unable to bear the wait until the next movie comes out, we decided to see if we could write a program to automatically generate a screenplay for a new Star Wars movie. We were also very excited by the recent release of Google’s TensorFlow API. We’re strong believers in deep learning and saw this as a perfect fit for our task.</p>
 
-		<h3 style="text-align:center;">The Project</h3>
-		<p>This project aims to simulate the speech patterns of the beloved Star Wars characters. By training Recurrent Neural Networks (RNN) on files of the Star Wars movie transcripts, we deliver a simulation of your favorite characters' personality, as shown through their language. We hope you enjoy!</p>
 
-		<p>Our work utilizes Google's Tensor Flow API for RNN implementation. Back-end processing and training was performed in Python. Front-end presentation was developed on the Ruby on Rails framework. </p>
+		<h3 style="text-align:center;">Challenges We Ran Into</h3>
+		<p>We’ve done some work in TensorFlow previously on convolutional neural networks, which was relatively easy, but the framework for recurrent neural networks was more difficult to work with than we were expecting. It took us quite a while to understand how to generate data once we had trained the LSTM, but by reading up on the theory behind the networks we were able to figure it out. Andrej Karpathy has a blog post on RNNs that was particularly helpful in this regard.</p>
+
+		<p>We also had some difficulty setting up the web server…</p>
+
+		<h3 style="text-align:center;">Accomplishments That We’re Proud Of</h3>
+		<p>The model does a very good job of learning the subtleties of the way that text in a screenplay is formatted. It quickly learns that the text is broken up into paragraphs, separated by character names in all caps, often centered on the page. It also learns how to construct vaguely meaningful sentences, which is very impressive considering that it is trained on a character by character basis, and has no understanding of words beforehand.</p>
+
+
+		<h3 style="text-align:center;">What We Learned</h3>
+		<p>We learned a lot about how RNNs work through this project. Although we have some experience in other techniques, this was our first project on modeling text data, which came with its own unique challenges. It’s interesting to think that our model knew absolutely nothing about the structure of our data, or even the way that characters are grouped together to form words. This makes our model highly generalizable, to the point that we could apply the same network architecture to learn how to model almost any other text or even arbitrary time-series data.</p>
+
+
+		<h3 style="text-align:center;">What's Next For NAME</h3>
+		<p>There’s still a lot of parameter tuning that can be done to improve performance. We weren’t able to conduct an exhaustive search over all hyperparameter values, but doing so could probably make our generated text a fair bit more realistic. We’re also severely limited by the size of our dataset; all in all we have only half a megabyte of data in total, which is much less than is normally needed by deep learning models. Expanding on our dataset could give us much better results.</p>
+
+
 
 	</div>
 </div>

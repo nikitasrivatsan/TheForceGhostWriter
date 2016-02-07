@@ -7,8 +7,8 @@
 
 		<% p1 = @debate.p1 %>
 		<% p2 = @debate.p2 %>
-		<% sL = @debate.sL %>
-		<%= `python lib/assets/pythontemplate/pythontemplate.py #{@debate.p1} #{@debate.p2} #{@debate.sL}` %>
+		<% sL = @debate.sL/1000.0 %>
+		<%= `python lib/assets/pythontemplate/pythontemplate.py #{p1} #{p2} #{sL}` %>
 
 		<%= render '/partials/sampletext' %>
 
