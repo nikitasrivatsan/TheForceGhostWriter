@@ -20,9 +20,9 @@
 <nav class="navbar navbar-inverse" data-spy="affix" style="height:51px;" data-offset-top="145">
   	<div class="container">
 	  	<ul class="nav navbar-nav">
-		    <li class=<%= 'active' if current_page?(welcome_index_path) %>><%= link_to 'HOME', welcome_index_path %></li>
+		    <li class=<%= 'active' if !(current_page?(about_index_path) || current_page?(theory_index_path)) %>><%= link_to 'HOME', welcome_index_path %></li>
 		    <li class=<%= 'active' if current_page?(about_index_path) %>><%= link_to 'ABOUT', about_index_path %></li>
-		    <li class=<%= 'active' if current_page?(comparison_index_path) %>><%= link_to 'COMPARISON', comparison_index_path %></li>
+		    <!--<li class=<%= 'active' if current_page?(comparison_index_path) %>><%= link_to 'COMPARISON', comparison_index_path %></li>-->
 		    <li class=<%= 'active' if current_page?(theory_index_path) %>><%= link_to 'THEORY', theory_index_path %></li>
 	  	</ul>
   	</div>
