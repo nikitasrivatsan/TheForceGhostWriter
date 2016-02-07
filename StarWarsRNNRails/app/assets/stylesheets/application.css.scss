@@ -43,7 +43,8 @@ html,body {
 h1 {
 	font-weight: bold;
 	font-variant: small-caps;
-	color: rgba(255,255,255,0.95);
+	color: rgba(255,255,100,0.95);
+	font-size: 300%;
 }
 
 .center {
@@ -70,9 +71,9 @@ img {
 }
 
 img:hover {
-	-moz-transform:scale(1.1); 
-	-webkit-transform:scale(1.1);
-	-o-transform:scale(1.1);
+	-moz-transform:scale(1.01); 
+	-webkit-transform:scale(1.01);
+	-o-transform:scale(1.01);
 }
 
 a {
