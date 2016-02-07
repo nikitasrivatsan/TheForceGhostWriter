@@ -6,16 +6,23 @@ import sys
 import math
 import numpy as np
 import random
+import time
 
 # hyperparameters
 BATCH_SIZE = 20
-HIDDEN_SIZE = 200
-EPOCHS = 5
-NUM_STEPS = 100
-NUM_SEQUENCES = 2
+HIDDEN_SIZE = 150
+EPOCHS = 100
+NUM_STEPS = 200
+LEN_GEN = 2000
+TEMPERATURE = 0.1
+LAYERS = 2
 
 if len(sys.argv) == 3:
     _, filename, behavior = sys.argv
+    if behavior == "test":
+        BATCH_SIZE = 1
+        NUM_STEPS = 1
+        
 else:
     print "./lstm.py <filename> [train|test]"
     sys.exit()
@@ -34,32 +41,32 @@ def main():
     print "Building network"
 
     cell = rnn_cell.BasicLSTMCell(HIDDEN_SIZE)
-    initial_state = state = tf.zeros([BATCH_SIZE, cell.state_size], dtype = np.float32)
+    stacked_cell = rnn_cell.MultiRNNCell([cell] * LAYERS)
+    initial_state = state = stacked_cell.zero_state(BATCH_SIZE, tf.float32)
 
     words = tf.placeholder(tf.float32, [BATCH_SIZE, NUM_STEPS, num_chars])
-    target_words = tf.placeholder(tf.int32, [BATCH_SIZE, NUM_STEPS, num_chars])
+    target_words = tf.placeholder(tf.float32, [BATCH_SIZE, NUM_STEPS, num_chars])
 
     W_soft = tf.Variable(tf.truncated_normal([HIDDEN_SIZE, num_chars], stddev = 0.01))
-    b_soft = tf.Variable(tf.constant(0.01, shape = [num_chars]))
+    b_soft = tf.Variable(tf.constant(0.005, shape = [num_chars]))
 
     loss = tf.Variable(tf.constant(0.0))
-    predictions = []
-    for i in range(0, NUM_STEPS):
-        with tf.variable_scope("LSTM" + str(i)):
-            output, state = cell(tf.reshape(words[:, i,:], [BATCH_SIZE, num_chars]), state)
+    with tf.variable_scope("RNN"):
+        for i in range(0, NUM_STEPS):
+            if i > 0:
+                tf.get_variable_scope().reuse_variables()
+
+            output, state = stacked_cell(tf.reshape(words[:, i,:], [BATCH_SIZE, num_chars]), state)
             prediction = tf.nn.softmax(tf.matmul(output, W_soft) + b_soft)
-            predictions.append(prediction)
 
-            loss = tf.add(loss, tf.reduce_sum(tf.mul(prediction,target_words[:,i,:])))
+            loss = tf.add(loss, tf.reduce_sum(tf.log(tf.reduce_sum(tf.mul(prediction, target_words[:,i,:]), 1))))
 
-            for j in range(0, BATCH_SIZE):
-                loss = tf.add(loss, tf.log(tf.slice(prediction, tf.pack([j, target_words[j, i]]), [1, 1])))
-
-    loss = - tf.truediv(loss, float(NUM_STEPS) / float(BATCH_SIZE))
+    loss = - tf.truediv(loss, float(BATCH_SIZE))
     final_state = state
+    final_prediction = prediction
 
     # define train step
-    train_step = tf.train.AdamOptimizer(1e-4).minimize(loss)
+    train_step = tf.train.AdamOptimizer(0.01).minimize(loss)
 
     print "Segmenting input data"
 
@@ -85,39 +92,54 @@ def main():
         print "Successfully loaded:", checkpoint.model_checkpoint_path
 
         # random seed
-        ch = random.randrange(num_chars)
-        
-        # repeatedly sample text
-        buff = ""
+        seed = "lightsaber "
+
         current_state = initial_state.eval()
-        for i in range(0, NUM_SEQUENCES):
-            gen_words = np.zeros((BATCH_SIZE, NUM_STEPS), dtype = np.int32)
-            gen_words[1, 1] = ch
-            for j in range(0, NUM_STEPS):
-                next_char_dist = predictions[j].eval(feed_dict = {initial_state : current_state,
-                                                                  words : gen_words})
-                # sample a character
-                choice = -1
-                point = random.random()
-                weight = 0.0
-                for p in range(0, num_chars):
-                    weight += next_char_dist[1, p]
-                    if weight >= point:
-                        choice = p
-                        break
 
-                buff += chars[choice]
-                gen_words[1, j] = choice
-
-            ch = gen_words[1, -1]
+        for ch in seed:
+            gen_word = np.zeros((1,1, num_chars), dtype = np.int32)
+            gen_word[0, 0, char_idx[ch]] = 1
             current_state = final_state.eval(feed_dict = {initial_state : current_state,
-                                                          words : gen_words})
-        print buff
+                                                           words : gen_word})
+
+        # repeatedly sample text
+        prev_char = seed[-1]
+        for i in range(0, LEN_GEN):
+            gen_word = np.zeros((1,1, num_chars), dtype = np.int32)
+            gen_word[0, 0, char_idx[prev_char]] = 1
+
+            next_char_dist, current_state = sess.run([final_prediction, final_state],
+                                                     feed_dict = {initial_state : current_state,
+                                                                  words : gen_word})
+
+            next_char_dist = np.array(next_char_dist[0], dtype = np.float32)
+
+            # scale the distribution
+            next_char_dist /= TEMPERATURE
+            next_char_dist = np.exp(next_char_dist)
+            next_char_dist /= sum(next_char_dist)
+
+            # sample a character
+            choice = -1
+            point = random.random()
+            weight = 0.0
+            for p in range(0, num_chars):
+                weight += next_char_dist[p]
+                if weight >= point:
+                    choice = p
+                    break
+
+            prev_char = chars[choice]
+            seed += prev_char
+
+        print seed
         
     else:
         print "Training new network weights"
 
         # iterate over batches
+        current_milli_time = lambda: int(round(time.time() * 1000))
+        old_time = current_milli_time()
         for e in range(0, EPOCHS):
             current_state = initial_state.eval()
             total_loss = 0.0
@@ -133,20 +155,17 @@ def main():
                         ohx[j,k,x[j,k]] = 1
                         ohy[j,k,y[j,k]] = 1
 
-                train_step.run(feed_dict = {initial_state : current_state,
-                                            words : ohx,
-                                            target_words : ohy})
+                current_state, current_loss, _ = sess.run([final_state, loss, train_step],
+                                                       feed_dict = {initial_state : current_state, words : ohx, target_words : ohy})
 
-                current_state, current_loss = sess.run([final_state, loss],
-                                                       feed_dict = {initial_state : current_state, words : x, target_words : y})
-
-                total_loss += current_loss[0][0]
+                total_loss += current_loss
 
             # save weights
             saver.save(sess, "saved_networks/" + filename, global_step = e)
 
-            total_loss /= epoch_size
-            print "Average loss per sequence for epoch", e, ": ", total_loss
+            print "Per word perplexity for epoch", e, ": ", total_loss / (NUM_STEPS * epoch_size)
+            print "Epoch finished in", current_milli_time() - old_time, "milliseconds"
+            old_time = current_milli_time()
         
 if __name__ == "__main__":
     main()
