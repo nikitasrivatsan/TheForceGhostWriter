@@ -47,8 +47,6 @@ char_idx = {ch:i for i,ch in enumerate(chars)}
 def main():
     sess = tf.InteractiveSession()
 
-    print "Building network"
-
     cell = rnn_cell.BasicLSTMCell(HIDDEN_SIZE)
     stacked_cell = rnn_cell.MultiRNNCell([cell] * LAYERS)
     initial_state = state = stacked_cell.zero_state(BATCH_SIZE, tf.float32)
@@ -86,6 +84,7 @@ def main():
     if behavior == "test":
         saver.restore(sess, checkpoint.model_checkpoint_path)
         print "Successfully loaded:", checkpoint.model_checkpoint_path
+        print
 
         current_state = initial_state.eval()
 

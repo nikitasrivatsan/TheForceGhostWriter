@@ -1,12 +1,12 @@
 <!-- Debate update.html.erb -->
-
 <div class="body-wrapper container-fluid">
 	<div class="info-body container">
-		
-	<h3 style="text-align:center;">Generated Script</h3>
 
-    <%= `echo #{@debate.sL} #{@debate.p2} #{@debate.p1}` %>
-    <%= `python /home/ubuntu/PresidentialRNN/lstm.py test /home/ubuntu/PresidentialRNN/star_wars_clean.txt #{@debate.sL} #{@debate.p2} #{@debate.p1}` %>
-	</div>
+	<h3 style="text-align:center;">Generated Script</h3>
+    <% sL=@debate.sL/1000.0 %>
+    <pre>
+    <%= `python /home/ubuntu/PresidentialRNN/lstm.py test /home/ubuntu/PresidentialRNN/star_wars_clean.txt #{sL} #{@debate.p2} #{@debate.p1}` %>
+    </pre>
+    </div>
 
 </div>
