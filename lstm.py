@@ -11,20 +11,28 @@ import time
 # hyperparameters
 BATCH_SIZE = 20
 HIDDEN_SIZE = 150
-EPOCHS = 100
+EPOCHS = 30
 NUM_STEPS = 200
-LEN_GEN = 2000
-TEMPERATURE = 0.1
+LEN_GEN = 5000
+TEMPERATURE = 0.04
 LAYERS = 2
+LEARNING_RATE = 0.01
+SEED = "\n"
 
-if len(sys.argv) == 3:
-    _, filename, behavior = sys.argv
+if len(sys.argv) > 1:
+    sys.argv.pop(0)
+    behavior = sys.argv.pop(0)
+    filename = sys.argv.pop(0)
     if behavior == "test":
         BATCH_SIZE = 1
         NUM_STEPS = 1
+        TEMPERATURE = float(sys.argv.pop(0))
+        SEED = " ".join(sys.argv)
+    else:
+        saving = sys.argv.pop(0)
         
 else:
-    print "./lstm.py <filename> [train|test]"
+    print "./lstm.py [train <filename> [load | new] | test <filename> <temperature> <seed>]"
     sys.exit()
 
 # data manipulation
@@ -35,7 +43,6 @@ num_chars = len(chars)
 char_idx = {ch:i for i,ch in enumerate(chars)}
 
 def main():
-
     sess = tf.InteractiveSession()
 
     print "Building network"
@@ -48,7 +55,7 @@ def main():
     target_words = tf.placeholder(tf.float32, [BATCH_SIZE, NUM_STEPS, num_chars])
 
     W_soft = tf.Variable(tf.truncated_normal([HIDDEN_SIZE, num_chars], stddev = 0.01))
-    b_soft = tf.Variable(tf.constant(0.005, shape = [num_chars]))
+    b_soft = tf.Variable(tf.constant(0.01, shape = [num_chars]))
 
     loss = tf.Variable(tf.constant(0.0))
     with tf.variable_scope("RNN"):
@@ -66,43 +73,28 @@ def main():
     final_prediction = prediction
 
     # define train step
-    train_step = tf.train.AdamOptimizer(0.01).minimize(loss)
-
-    print "Segmenting input data"
-
-    # segment data into batches
-    num_batches = data_size / BATCH_SIZE
-
-    data_idx = np.array([char_idx[ch] for ch in data], dtype = np.int32)
-    data_batched = np.zeros([BATCH_SIZE, num_batches], dtype = np.int32)
-    for i in range(0, BATCH_SIZE):
-        data_batched[i] = data_idx[num_batches * i : num_batches * (i + 1)]
-
-    epoch_size = (num_batches - 1) / NUM_STEPS
+    train_step = tf.train.AdamOptimizer(LEARNING_RATE).minimize(loss)
 
     # initialize everything
     sess.run(tf.initialize_all_variables())
 
     # saving the model
     saver = tf.train.Saver()
-    sess.run(tf.initialize_all_variables())
     checkpoint = tf.train.get_checkpoint_state("saved_networks")
-    if checkpoint and checkpoint.model_checkpoint_path and behavior == "test":
+    if behavior == "test":
         saver.restore(sess, checkpoint.model_checkpoint_path)
         print "Successfully loaded:", checkpoint.model_checkpoint_path
 
-        # random seed
-        seed = "lightsaber "
-
         current_state = initial_state.eval()
 
-        for ch in seed:
+        for ch in SEED:
             gen_word = np.zeros((1,1, num_chars), dtype = np.int32)
             gen_word[0, 0, char_idx[ch]] = 1
             current_state = final_state.eval(feed_dict = {initial_state : current_state,
                                                            words : gen_word})
 
         # repeatedly sample text
+        seed = SEED
         prev_char = seed[-1]
         for i in range(0, LEN_GEN):
             gen_word = np.zeros((1,1, num_chars), dtype = np.int32)
@@ -135,7 +127,23 @@ def main():
         print seed
         
     else:
-        print "Training new network weights"
+        if saving == "load":
+            saver.restore(sess, checkpoint.model_checkpoint_path)
+            print "Successfully loaded:", checkpoint.model_checkpoint_path
+
+        print "Segmenting input data"
+
+        # segment data into batches
+        num_batches = data_size / BATCH_SIZE
+
+        data_idx = np.array([char_idx[ch] for ch in data], dtype = np.int32)
+        data_batched = np.zeros([BATCH_SIZE, num_batches], dtype = np.int32)
+        for i in range(0, BATCH_SIZE):
+            data_batched[i] = data_idx[num_batches * i : num_batches * (i + 1)]
+
+        epoch_size = (num_batches - 1) / NUM_STEPS
+
+        print "Training network weights"
 
         # iterate over batches
         current_milli_time = lambda: int(round(time.time() * 1000))
