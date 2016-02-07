@@ -13,13 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20160206194524) do
 
-  create_table "candidates", force: true do |t|
-    t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean  "Onstage",    default: false
-  end
-
   create_table "debates", force: true do |t|
     t.string   "p1"
     t.string   "p2"
