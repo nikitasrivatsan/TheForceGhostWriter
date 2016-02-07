@@ -11,23 +11,62 @@
 		</br>
 		<div class="row">
 			<div class="col-md-4" id="bernie">
-				<img src="/assets/berniesanders.jpg" class="img-circle" alt="Senator Sanders" style="width:330px;height:228px;" onmouseover="bigImg(this)">
+				<img src="/assets/berniesanders.jpg" class="img-thumbnail" alt="Senator Sanders" style="width:330px;height:228px;" onmouseover="bigImg(this)">
 			</div>
 			<div class="col-md-4" id="hillary">
-				<img src="/assets/hillaryclinton.jpg" class="img-circle" alt="Secretary Clinton" style="width:330px;height:228px;">
+				<img src="/assets/hillaryclinton.jpg" class="img-thumbnail" alt="Secretary Clinton" style="width:330px;height:228px;">
 			</div>
 			<div class="col-md-4" id="trump">
-				<img src="/assets/donaldtrump.jpg" class="img-circle" alt="Mogul Trump" style="width:330px;height:228px;">
+				<img src="/assets/donaldtrump.jpg" class="img-thumbnail" alt="Mogul Trump" style="width:330px;height:228px;">
 			</div>
 		</div>
+
 		</br></br>
-		<%= button_to "Kickoff" %>
+		
+		<p>If this is working, then this will show: <%= @debate.id %></p> 
+
+
+		<% debate = Debate.find(1) %>
+		<%= text_field_tag debate %>
+		
+
+		<%= form_for debate do |f| %>
+			<%= f.label :p1, "Candidate One" %>
+			<%= f.select :p1, ['Sanders','Clinton','Trump'] %>
+
+			<%= f.label :p2, "Candidate Two" %>
+			<%= f.select :p2, ['Sanders','Clinton','Trump'] %>
+
+			<%= f.number_field :sL %>
+			<%= f.submit "Kickoff" %>
+		<% end %> 
+
+
+		<select>
+			<option value="Sanders">Sanders</option>
+			<option value="Clinton">Clinton</option>
+			<option value="Trump">Trump</option>
+		</select>
+
+		<select>
+			<option value="Sanders">Sanders</option>
+			<option value="Clinton">Clinton</option>
+			<option value="Trump">Trump</option>
+		</select>
+
+		<%= `python lib/assets/pythontemplate/pythontemplate.py #{@p1} #{@p2} #{@tL}` %>
 
 		<%= render '/partials/sampletext' %>
+
+
+
+
+
+
+
+
+
 	</div>
-
-
-
 
 </div>
 

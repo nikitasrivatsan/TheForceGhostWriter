@@ -1,7 +1,6 @@
 @import "bootstrap";
 
 html,body {
-	height: 100%;
 	background-color: rgba(0,0,75,0.05);
 }
 .header-wrapper {
@@ -29,7 +28,7 @@ html,body {
 	padding: 10px 20px 10px 20px;
 }
 
-h1 {
+h1 a {
 	font-weight: bold;
 	font-variant: small-caps;
 	color: rgba(255,255,255,0.80);
@@ -51,6 +50,10 @@ img:hover {
 	-o-transform:scale(1.1);
 }
 
+a {
+	text-decoration: none;
+	text-color: none;
+}
 a:hover {
 	text-decoration: none;
 }
