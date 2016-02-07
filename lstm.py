@@ -13,7 +13,7 @@ BATCH_SIZE = 20
 HIDDEN_SIZE = 150
 EPOCHS = 30
 NUM_STEPS = 200
-LEN_GEN = 5000
+LEN_GEN = 15000
 TEMPERATURE = 0.04
 LAYERS = 2
 LEARNING_RATE = 0.01
@@ -27,12 +27,14 @@ if len(sys.argv) > 1:
         BATCH_SIZE = 1
         NUM_STEPS = 1
         TEMPERATURE = float(sys.argv.pop(0))
+        TEMPERATURE = max(0.02, TEMPERATURE)
+        LEN_GEN = int(sys.argv.pop(0))
         SEED = " ".join(sys.argv)
     else:
         saving = sys.argv.pop(0)
         
 else:
-    print "./lstm.py [train <filename> [load | new] | test <filename> <temperature> <seed>]"
+    print "./lstm.py [train <filename> [load | new] | test <filename> <temperature> <num_chars> <seed>]"
     sys.exit()
 
 # data manipulation
@@ -44,8 +46,6 @@ char_idx = {ch:i for i,ch in enumerate(chars)}
 
 def main():
     sess = tf.InteractiveSession()
-
-    print "Building network"
 
     cell = rnn_cell.BasicLSTMCell(HIDDEN_SIZE)
     stacked_cell = rnn_cell.MultiRNNCell([cell] * LAYERS)
@@ -80,10 +80,11 @@ def main():
 
     # saving the model
     saver = tf.train.Saver()
-    checkpoint = tf.train.get_checkpoint_state("saved_networks")
+    checkpoint = tf.train.get_checkpoint_state("/home/ubuntu/PresidentialRNN/saved_networks")
     if behavior == "test":
         saver.restore(sess, checkpoint.model_checkpoint_path)
         print "Successfully loaded:", checkpoint.model_checkpoint_path
+        print
 
         current_state = initial_state.eval()
 
@@ -169,7 +170,7 @@ def main():
                 total_loss += current_loss
 
             # save weights
-            saver.save(sess, "saved_networks/" + filename, global_step = e)
+            saver.save(sess, "/home/ubuntu/PresidentialRNN/saved_networks/" + filename, global_step = e)
 
             print "Per word perplexity for epoch", e, ": ", total_loss / (NUM_STEPS * epoch_size)
             print "Epoch finished in", current_milli_time() - old_time, "milliseconds"
