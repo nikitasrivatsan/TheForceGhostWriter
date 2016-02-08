@@ -2,6 +2,10 @@
 
 NOTE: This project was developed as part of the HopHacks 2016 hackathon. As such, the code will be a little messy until we can finish cleaning it up.
 
+You can see our [interview](https://www.youtube.com/watch?v=c3C4TqjooK4&feature=youtu.be&t=1h17m1s) and [final presentation](https://www.youtube.com/watch?v=nZtWboZxCmQ&feature=youtu.be&t=40m45s).
+
+This project was awarded Best Use of AWS, Best Use of a Google API, and placed among the top 10 finalists.
+
 ##Inspiration
 Our project stems from a simple question: can you model text well enough to generate original content? We’d recently seen the new Star Wars movie, and were immediately hungry for more. Unable to bear the wait until the next movie comes out, we decided to see if we could write a program to automatically generate a screenplay for a new Star Wars movie. We were also very excited by the recent release of Google’s TensorFlow API. We’re strong believers in deep learning and saw this as a perfect fit for our task.
 
