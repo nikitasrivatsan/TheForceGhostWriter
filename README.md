@@ -1,6 +1,6 @@
 # The Force Ghost Writer
 
-NOTE: This project was developed as part of the HopHacks 2016 hackathon. As such, the code will be a little messy until we can finish cleaning it up.
+NOTE: This project was developed as part of the HopHacks Spring 2016 hackathon. As such, the code will be a little messy until we can finish cleaning it up.
 
 You can see our [interview](https://www.youtube.com/watch?v=c3C4TqjooK4&feature=youtu.be&t=1h17m1s) and [final presentation](https://www.youtube.com/watch?v=nZtWboZxCmQ&feature=youtu.be&t=40m45s).
 
