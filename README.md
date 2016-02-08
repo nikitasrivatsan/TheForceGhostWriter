@@ -1,5 +1,7 @@
 # The Force Ghost Writer
 
+NOTE: This project was developed as part of the HopHacks 2016 hackathon. As such, the code will be a little messy until we can finish cleaning it up.
+
 ##Inspiration
 Our project stems from a simple question: can you model text well enough to generate original content? We’d recently seen the new Star Wars movie, and were immediately hungry for more. Unable to bear the wait until the next movie comes out, we decided to see if we could write a program to automatically generate a screenplay for a new Star Wars movie. We were also very excited by the recent release of Google’s TensorFlow API. We’re strong believers in deep learning and saw this as a perfect fit for our task.
 
